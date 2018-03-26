@@ -15,11 +15,15 @@ mongoose.Promise = Promise;
 
 router.get("/", function (req, res) {
     res.render("index");
+    //SHOULD ALSO RENDER ALL ARTICLES SAVED IN THE DB RIGHT AWAY
 });
 
 
 // A GET request to scrape the nytimes website
 router.post("/scrape", function (req, res) {
+
+    //******NEED TO ADD FUNCTIONALITY TO SAVE EVERY SINGLE SCRAPED ARTICLE TO THE DB*******/
+    //******WE NEED THIS TO BE ABLE TO ADD COMMENTS TO EACH ARTICLE AND HAVE IT BE VISIBLE TO ALL USERS */
 
     // First, we grab the body of the html with request
     request("http://www.nytimes.com/", function (error, response, html) {
@@ -86,6 +90,41 @@ router.post("/save", function (req, res) {
 
 });
 
+// This will get the articles scraped and saved in db and show them in list.
+router.get("/savedarticles", function (req, res) {
+
+    // Grab every doc in the Articles array
+    Article.find({}, function (error, result) {
+        // Log any errors
+        if (error) {
+            console.log(error);
+        }
+        // Or send the doc to the browser as a json object
+        else {
+            var hbsArticleObject = {
+                articles: result
+            };
+
+            res.render("savedarticles", hbsArticleObject);
+        }
+    });
+});
+
+router.get("/delete/:id", function (req, res) {
+
+    console.log("ID being deleted:" + req.params.id);
+
+    console.log("Article Deleted from saved articles.");
+
+    Article.findOneAndRemove({ "_id": req.params.id }, function (err, offer) {
+        if (err) {
+            console.log("error while deleting: " + err);
+        } else {
+            console.log("successfully deleted article");
+        }
+        res.redirect("/savedarticles");
+    });
+});
 
 // Export routes for server.js to use.
 module.exports = router;
