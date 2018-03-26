@@ -8,6 +8,8 @@ var cheerio = require("cheerio");
 
 var mongoose = require("mongoose");
 
+var Article = require("../models/article.js");
+
 // Set mongoose to leverage built in JavaScript ES6 Promises
 mongoose.Promise = Promise;
 
@@ -35,7 +37,7 @@ router.post("/scrape", function (req, res) {
             // Add the text and href of every link, and save them as properties of the result object
             result.title = $(this).children("a").text();
 
-            console.log("What's the result title? " + result.title);
+            console.log("title: " + result.title);
 
             result.link = $(this).children("a").attr("href");
 
@@ -52,6 +54,36 @@ router.post("/scrape", function (req, res) {
         res.render("index", hbsArticleObject);
 
     });
+});
+
+router.post("/save", function (req, res) {
+
+    console.log("This is the title: " + req.body.title);
+
+    var newArticleObject = {};
+
+    newArticleObject.title = req.body.title;
+
+    newArticleObject.link = req.body.link;
+
+    var entry = new Article(newArticleObject);
+
+    console.log("We can save the article: " + entry);
+
+    // Now, save that entry to the db
+    entry.save(function (err, doc) {
+        // Log any errors
+        if (err) {
+            console.log(err);
+        }
+        // Or log the doc
+        else {
+            console.log(doc);
+        }
+    });
+
+    res.redirect("/savedarticles");
+
 });
 
 

@@ -4,6 +4,8 @@ var bodyParser = require("body-parser");
 var logger = require("morgan");
 var mongoose = require("mongoose");
 
+var Article = require("./models/article.js")
+
 // Scraping dependencies
 var request = require("request");
 var cheerio = require("cheerio");
@@ -35,7 +37,9 @@ var routes = require("./controllers/routes.js");
 
 app.use("/", routes);
 
-mongoose.connect("mongodb://heroku_f04tff6d:gmu7fb2cfvfuc3rri69nnjm5i4@ds123399.mlab.com:23399/heroku_f04tff6d");
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
+
+mongoose.connect(MONGODB_URI);
 
 var db = mongoose.connection;
 
