@@ -15,15 +15,11 @@ mongoose.Promise = Promise;
 
 router.get("/", function (req, res) {
     res.render("index");
-    //SHOULD ALSO RENDER ALL ARTICLES SAVED IN THE DB RIGHT AWAY
 });
 
 
 // A GET request to scrape the nytimes website
 router.post("/scrape", function (req, res) {
-
-    //******NEED TO ADD FUNCTIONALITY TO SAVE EVERY SINGLE SCRAPED ARTICLE TO THE DB*******/
-    //******WE NEED THIS TO BE ABLE TO ADD COMMENTS TO EACH ARTICLE AND HAVE IT BE VISIBLE TO ALL USERS */
 
     // First, we grab the body of the html with request
     request("http://www.nytimes.com/", function (error, response, html) {
@@ -50,7 +46,9 @@ router.post("/scrape", function (req, res) {
         });
 
         console.log("Scraped Articles object built nicely: " + scrapedArticles);
+        //push the articles to the database
 
+        //use the database to send data to the handlebars
         var hbsArticleObject = {
             articles: scrapedArticles
         };
@@ -120,7 +118,7 @@ router.get("/delete/:id", function (req, res) {
         if (err) {
             console.log("error while deleting: " + err);
         } else {
-            console.log("successfully deleted article");
+            console.log("successfully deleted");
         }
         res.redirect("/savedarticles");
     });
